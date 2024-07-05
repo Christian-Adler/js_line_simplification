@@ -35,6 +35,11 @@ let yMax = 1;
 let numValues = 5000;
 let step = 5 / numValues;
 
+let epsilon = 110;
+
+let showOri = true;
+let showSimple = true;
+
 let fillFnc = () => {
 };
 
@@ -89,8 +94,6 @@ const drawSeq = (ctx, seq) => {
 const originalLineDiv = document.getElementById("originalLine");
 const reducedLineDiv = document.getElementById("reducedLine");
 
-let epsilon = 110;
-
 const update = () => {
 
   ctx.fillStyle = "white";
@@ -105,16 +108,19 @@ const update = () => {
 
   // ctx.save();
   // ctx.translate(10, 0);
-  drawSeq(ctx, sequence);
+
+  if (showOri)
+    drawSeq(ctx, sequence);
+  originalLineDiv.innerText = 'original: ' + sequence.length;
 
   ctx.strokeStyle = "red";
   const simplerSequence = lineSimplification(sequence, epsilon / 1000);
-  drawSeq(ctx, simplerSequence);
+  if (showSimple)
+    drawSeq(ctx, simplerSequence);
+  reducedLineDiv.innerText = 'simple: ' + simplerSequence.length;
 
   // ctx.restore();
 
-  originalLineDiv.innerText = 'original: ' + sequence.length;
-  reducedLineDiv.innerText = 'simple: ' + simplerSequence.length;
 
   updateWorldSettings();
 
@@ -123,23 +129,22 @@ const update = () => {
 
 update();
 
-const epsilonInput = document.getElementById('inputEpsilon');
-epsilonInput.addEventListener("input", (evt) => {
+document.getElementById('inputEpsilon').addEventListener("input", (evt) => {
   const target = evt.target;
   epsilon = Math.pow(parseFloat(target.value), 1.2);
   target.nextSibling.innerText = epsilon.toFixed(1);
-  // val = parseInt(val);
-  // if (val <= 0)
-  //   stepTime = Number.MAX_SAFE_INTEGER;
-  // else
-  //   stepTime = 1000 / val;
 });
-const numValuesInput = document.getElementById('inputNumValues');
-numValuesInput.addEventListener("input", (evt) => {
+document.getElementById('inputNumValues').addEventListener("input", (evt) => {
   const target = evt.target;
   numValues = Math.floor(Math.pow(parseInt(target.value), 2.2));
   target.nextSibling.innerText = numValues;
   fill();
+});
+document.getElementById('checkShowOriginal').addEventListener("change", (evt) => {
+  showOri = evt.target.checked;
+});
+document.getElementById('checkShowSimple').addEventListener("change", (evt) => {
+  showSimple = evt.target.checked;
 });
 const selectDataFncInput = document.getElementById('selectDataFnc');
 for (const key of Object.keys(dataFnc)) {

@@ -28,7 +28,7 @@
             top: 10px;
             right: 10px;
             padding: 10px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(5, 2, 76, 0.8);
             border-radius: 4px;
             color: white;
         }
@@ -39,7 +39,7 @@
             gap: 10px;
         }
 
-        input {
+        input[type=range] {
             width: 400px;
         }
 
@@ -56,23 +56,27 @@
 
     <label>Daten
         <select id="selectDataFnc" name="selectDataFnc">
-            <!--            <option value="Exp">Exp</option>-->
-            <!--            <option value="Cos">Cos</option>-->
-            <!--            <option value="Random">Random</option>-->
         </select>
-    </label><br> <label>Num Values
-    <input id="inputNumValues" type="range" min="1" max="100" value="5" step="1"/><span
-            class="rangeValue">5000</span>
-</label><br>
-    <label>Epsilon
+    </label><br>
+    <label>Num Values
+        <input id="inputNumValues" type="range" min="1" max="100" value="5" step="1"/><span
+                class="rangeValue">5000</span>
+    </label><br>
+    <label style="color: red;">Epsilon
         <input id="inputEpsilon" type="range" min="0" max="50" value="50" step="0.1"/><span
                 class="rangeValue">110</span>
     </label>
     <br>
     <hr>
     <br>
-    <div id="originalLine"></div>
-    <div id="reducedLine"></div>
+    <label style="justify-content: flex-start;">
+        <input id="checkShowOriginal" type="checkbox" name="checkbox" checked/><span id="originalLine"
+                                                                                     class=""></span>
+    </label>
+    <label style="justify-content: flex-start;color: red;">
+        <input id="checkShowSimple" type="checkbox" name="checkbox" checked/><span id="reducedLine"
+                                                                                   class=""></span>
+    </label>
 </div>
 
 <canvas id="canvas" height="500" width="500"></canvas>
