@@ -29,15 +29,39 @@ updateWorldSettings();
 
 let xMin = 0;
 let xMax = 5;
+let yMin = -1;
+let yMax = 1;
 
-const step = 0.0001;
+let numValues = 5000;
 
 const sequence = [];
 
 const fillSequenceExp = () => {
+  let step = 5 / numValues;
+  yMax = Number.MIN_SAFE_INTEGER;
+  yMin = Number.MAX_SAFE_INTEGER;
   sequence.splice(0, sequence.length);
+
   for (let x = 0; x <= 5; x += step) {
     const y = -Math.exp(-x) * Math.cos(2 * Math.PI * x);
+    yMin = Math.min(yMin, y);
+    yMax = Math.max(yMax, y);
+    sequence.push(new Vector(x, y));
+  }
+
+  xMin = sequence[0].x;
+  xMax = sequence[sequence.length - 1].x;
+};
+const fillSequenceSinCos = () => {
+  let step = 5 / numValues;
+  yMax = Number.MIN_SAFE_INTEGER;
+  yMin = Number.MAX_SAFE_INTEGER;
+  sequence.splice(0, sequence.length);
+
+  for (let x = 0; x <= 5; x += step) {
+    const y = -(Math.cos(2 * Math.PI * x * 2) + Math.sin(Math.PI * x));
+    yMin = Math.min(yMin, y);
+    yMax = Math.max(yMax, y);
     sequence.push(new Vector(x, y));
   }
 
@@ -45,9 +69,15 @@ const fillSequenceExp = () => {
   xMax = sequence[sequence.length - 1].x;
 };
 const fillSequenceRand = () => {
+  let step = 5 / numValues;
+  yMax = Number.MIN_SAFE_INTEGER;
+  yMin = Number.MAX_SAFE_INTEGER;
   sequence.splice(0, sequence.length);
+
   for (let x = 0; x <= 5; x += step) {
-    const y = -Math.sin(2 * Math.PI * x) * Math.cos(2 * Math.PI * x);
+    const y = -Math.random();
+    yMin = Math.min(yMin, y);
+    yMax = Math.max(yMax, y);
     sequence.push(new Vector(x, y));
   }
 
@@ -55,15 +85,21 @@ const fillSequenceRand = () => {
   xMax = sequence[sequence.length - 1].x;
 };
 
-fillSequenceExp();
-// fillSequenceRand();
+const dataFnc = {
+  Exp: fillSequenceExp,
+  Cos: fillSequenceSinCos,
+  Random: fillSequenceRand,
+};
+
+let fillFnc = dataFnc['Exp'];
+fillFnc();
 
 const drawSeq = (ctx, seq) => {
   ctx.beginPath();
   for (let i = 0; i < seq.length; i++) {
     const vec = seq[i];
     const x = scale(vec.x, xMin, xMax, 10, worldWidth - 10);
-    const y = scale(vec.y, -1, 1, 10, worldHeight - 10);
+    const y = scale(vec.y, yMin, yMax, 10, worldHeight - 10);
     if (i === 0)
       ctx.moveTo(x, y);
     else
@@ -75,7 +111,7 @@ const drawSeq = (ctx, seq) => {
 const originalLineDiv = document.getElementById("originalLine");
 const reducedLineDiv = document.getElementById("reducedLine");
 
-let epsilon = 10;
+let epsilon = 110;
 
 const update = () => {
 
@@ -100,7 +136,7 @@ const update = () => {
   // ctx.restore();
 
   originalLineDiv.innerText = 'original: ' + sequence.length;
-  reducedLineDiv.innerText = 'original: ' + simplerSequence.length;
+  reducedLineDiv.innerText = 'simple: ' + simplerSequence.length;
 
   updateWorldSettings();
 
@@ -112,11 +148,24 @@ update();
 const epsilonInput = document.getElementById('inputEpsilon');
 epsilonInput.addEventListener("input", (evt) => {
   const target = evt.target;
-  epsilon = parseFloat(target.value);
+  epsilon = Math.pow(parseFloat(target.value), 1.2);
   target.nextSibling.innerText = epsilon.toFixed(1);
   // val = parseInt(val);
   // if (val <= 0)
   //   stepTime = Number.MAX_SAFE_INTEGER;
   // else
   //   stepTime = 1000 / val;
-})
+});
+const numValuesInput = document.getElementById('inputNumValues');
+numValuesInput.addEventListener("input", (evt) => {
+  const target = evt.target;
+  numValues = Math.floor(Math.pow(parseInt(target.value), 2.2));
+  target.nextSibling.innerText = numValues;
+  fillFnc();
+});
+const selectDataFncInput = document.getElementById('selectDataFnc');
+selectDataFncInput.addEventListener("change", (evt) => {
+  const target = evt.target;
+  fillFnc = dataFnc[target.value];
+  fillFnc();
+});
