@@ -112,6 +112,16 @@ class Vector {
     return new Vector(x, y);
   }
 
+  static scalarProjection(vecP, vecA, vecB) {
+    const ap = vecP.clone().subVec(vecA);
+    const ab = vecB.clone().subVec(vecA);
+    ab.normalize();
+    ab.mult(ap.dotProduct(ab));
+    // noinspection UnnecessaryLocalVariableJS
+    const normalPoint = vecA.clone().addVec(ab);
+    return normalPoint;
+  }
+
   static zero() {
     return new Vector(0, 0);
   }
