@@ -27,16 +27,36 @@ updateWorldSettings();
 
 // calc sequences
 
+let xMin = 0;
+let xMax = 5;
+
 const step = 0.0001;
 
 const sequence = [];
-for (let x = 0; x <= 5; x += step) {
-  const y = -Math.exp(-x) * Math.cos(2 * Math.PI * x);
-  sequence.push(new Vector(x, y));
-}
 
-const xMin = sequence[0].x;
-const xMax = sequence[sequence.length - 1].x;
+const fillSequenceExp = () => {
+  sequence.splice(0, sequence.length);
+  for (let x = 0; x <= 5; x += step) {
+    const y = -Math.exp(-x) * Math.cos(2 * Math.PI * x);
+    sequence.push(new Vector(x, y));
+  }
+
+  xMin = sequence[0].x;
+  xMax = sequence[sequence.length - 1].x;
+};
+const fillSequenceRand = () => {
+  sequence.splice(0, sequence.length);
+  for (let x = 0; x <= 5; x += step) {
+    const y = -Math.sin(2 * Math.PI * x) * Math.cos(2 * Math.PI * x);
+    sequence.push(new Vector(x, y));
+  }
+
+  xMin = sequence[0].x;
+  xMax = sequence[sequence.length - 1].x;
+};
+
+fillSequenceExp();
+// fillSequenceRand();
 
 const drawSeq = (ctx, seq) => {
   ctx.beginPath();
@@ -51,6 +71,11 @@ const drawSeq = (ctx, seq) => {
   }
   ctx.stroke();
 }
+
+const originalLineDiv = document.getElementById("originalLine");
+const reducedLineDiv = document.getElementById("reducedLine");
+
+let epsilon = 10;
 
 const update = () => {
 
@@ -69,11 +94,13 @@ const update = () => {
   drawSeq(ctx, sequence);
 
   ctx.strokeStyle = "red";
-  const simplerSequence = lineSimplification(sequence, 0.01);
+  const simplerSequence = lineSimplification(sequence, epsilon / 1000);
   drawSeq(ctx, simplerSequence);
 
   // ctx.restore();
 
+  originalLineDiv.innerText = 'original: ' + sequence.length;
+  reducedLineDiv.innerText = 'original: ' + simplerSequence.length;
 
   updateWorldSettings();
 
@@ -81,3 +108,15 @@ const update = () => {
 }
 
 update();
+
+const epsilonInput = document.getElementById('inputEpsilon');
+epsilonInput.addEventListener("input", (evt) => {
+  const target = evt.target;
+  epsilon = parseFloat(target.value);
+  target.nextSibling.innerText = epsilon.toFixed(1);
+  // val = parseInt(val);
+  // if (val <= 0)
+  //   stepTime = Number.MAX_SAFE_INTEGER;
+  // else
+  //   stepTime = 1000 / val;
+})
