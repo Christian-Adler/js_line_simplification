@@ -47,6 +47,8 @@ const dataFnc = {
   Cut: (x) => Math.exp(-x) * Math.min(Math.sin(2 * Math.PI * x), 0.3),
   ATan: (x) => -(Math.sin(Math.PI * x / 5) - Math.atan(x * 2)),
   Steps: (x) => ((x - 0.2) * Math.sin(1 / (x - 0.2)) + x + 0.8) * (10 * (x - 0.1) ^ 2 + 0.9),
+  SinPow: (x) => Math.sin(x ** x) / Math.pow(2, (x ** x - Math.PI / 2) / Math.PI),
+  Rect: (x) => Math.sin(2 * Math.sin(2 * Math.sin(2 * Math.sin(x * 5)))),
   Random: () => -Math.random(),
 };
 
